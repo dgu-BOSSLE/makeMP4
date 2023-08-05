@@ -3,10 +3,14 @@
  * {{uniforms: {time: {type: string, value: number}, iResolution: {type: string, value: [*]}}, fragment: string}}
  */
 
-const alpha = 'https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/alpha.png';
-const shine = 'https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/shine.png';
-const background = 'https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/background.jpg';
-const foreground = 'https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/foreground.jpg';
+const alpha =
+  "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/alpha.png";
+const shine =
+  "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/shine.png";
+const background =
+  "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/background.jpg";
+const foreground =
+  "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/foreground.jpg";
 // const alpha = 'https://stefanweck.nl/codepen/alpha.png';
 // const shine = 'https://stefanweck.nl/codepen/shine.png';
 // const background = 'https://stefanweck.nl/codepen/background.jpg';
@@ -15,33 +19,30 @@ const foreground = 'https://raw.githubusercontent.com/ptluaan/-raindrop_effect/m
 const shaderData = {
   uniforms: {
     iResolution: {
-      type: 'v2',
-      value: [
-      window.innerWidth,
-      window.innerHeight] },
-
+      type: "v2",
+      value: [window.innerWidth, window.innerHeight],
+    },
 
     vTextureSize: {
-      type: 'v2',
-      value: [
-      0,
-      0] },
-
+      type: "v2",
+      value: [0, 0],
+    },
 
     uTextureForeground: {
-      type: 'sampler2D',
-      value: null },
+      type: "sampler2D",
+      value: null,
+    },
 
     uTextureBackground: {
-      type: 'sampler2D',
-      value: null },
+      type: "sampler2D",
+      value: null,
+    },
 
     uTextureDropShine: {
-      type: 'sampler2D',
-      value: null } },
-
-      
-
+      type: "sampler2D",
+      value: null,
+    },
+  },
 
   fragment: `
         precision mediump float;
@@ -135,8 +136,8 @@ const shaderData = {
             vec4 fg = vec4(tex.rgb, a);
             gl_FragColor = blend(bg, fg);
         }
-	` };
-
+	`,
+};
 
 /**
  * Application Class
@@ -150,16 +151,16 @@ class Application {
     this.height = window.innerHeight;
     // this.loader.defaultQueryString = 'user=me&password=secret';//
     // Xác định nội dung mà PIXI cần tải trước để sử dụng sau này trong application
-    this.loader = PIXI.loader.
-    add("_alpha",alpha).
-    add("_shine",shine).
-    add("_background",background).
-    add("_foreground",foreground).
-    // add("./alpha.png").
-    // add("./shine.png").
-    // add("./background.jpg").
-    // add("./foreground.jpg").
-    load(() => this.initialize());
+    this.loader = PIXI.loader
+      .add("_alpha", alpha)
+      .add("_shine", shine)
+      .add("_background", background)
+      .add("_foreground", foreground)
+      // add("./alpha.png").
+      // add("./shine.png").
+      // add("./background.jpg").
+      // add("./foreground.jpg").
+      .load(() => this.initialize());
   }
 
   /**
@@ -169,21 +170,21 @@ class Application {
   initialize() {
     // Tạo đối tượng Stat và append nó vào DOM
     this.stats = new Stats();
-    this.stats.domElement.style.position = 'absolute';
+    this.stats.domElement.style.position = "absolute";
     // this.stats.domElement.style.left = '100px';
     // this.stats.domElement.style.top = '100px';
-    this.stats.domElement.style.left = '0px';
-    this.stats.domElement.style.top = '0px';
-    this.stats.domElement.style.zIndex = '9000';
+    this.stats.domElement.style.left = "0px";
+    this.stats.domElement.style.top = "0px";
+    this.stats.domElement.style.zIndex = "9000";
     document.body.appendChild(this.stats.domElement);
 
     // Khởi tạo một instance của EffectCanvas dùng để khởi tạo tất cả hình ảnh
     this.effectCanvas = new EffectCanvas(this.width, this.height, this.loader);
 
     // Thay đổi kích thước trình nghe cho canvas để lấp đầy cửa sổ trình duyệt một cách tự động
-    window.addEventListener('resize', () => this.resizeCanvas(), false);
+    window.addEventListener("resize", () => this.resizeCanvas(), false);
 
-    //Khởi chạy phương thức initial loop 
+    //Khởi chạy phương thức initial loop
     this.loop();
   }
 
@@ -211,8 +212,8 @@ class Application {
     this.effectCanvas.render();
 
     this.stats.end();
-  }}
-
+  }
+}
 
 /**
  * EffectCanvas Class
@@ -225,7 +226,8 @@ class EffectCanvas {
     // Khởi tạo và thiết lập renderer
     this.renderer = new PIXI.autoDetectRenderer(width, height, {
       antialias: false,
-      transparent: false });
+      transparent: false,
+    });
 
     this.renderer.autoResize = true;
     document.body.appendChild(this.renderer.view);
@@ -237,7 +239,7 @@ class EffectCanvas {
     // Nếu không shader sẽ không lấp đầy toàn bộ màn hình
     this.background = new PIXI.Graphics();
     this.background.fillAlphanumber = 0;
-    this.background.beginFill('0xffffff');
+    this.background.beginFill("0xffffff");
     this.background.drawRect(0, 0, width, height);
     this.background.endFill();
     this.background.alpha = 0;
@@ -247,16 +249,23 @@ class EffectCanvas {
     this.dropletManager = new DropletManager(this.stage, loader);
 
     // Gửi thông tin về các họa tiết và kích thước của họa tiết nền thông qua uniforms tới shader
-    shaderData.uniforms.uTextureDropShine.value = loader.resources["_shine"].texture;
-    shaderData.uniforms.uTextureBackground.value = loader.resources["_background"].texture;
-    shaderData.uniforms.uTextureForeground.value = loader.resources["_foreground"].texture;
+    shaderData.uniforms.uTextureDropShine.value =
+      loader.resources["_shine"].texture;
+    shaderData.uniforms.uTextureBackground.value =
+      loader.resources["_background"].texture;
+    shaderData.uniforms.uTextureForeground.value =
+      loader.resources["_foreground"].texture;
     shaderData.uniforms.vTextureSize.value = [
-    loader.resources["_background"].texture.width,
-    loader.resources["_background"].texture.height];
-
+      loader.resources["_background"].texture.width,
+      loader.resources["_background"].texture.height,
+    ];
 
     // Tạo bộ lọc Pixi sử dụng shader code tùy chỉnh
-    this.dropletShader = new PIXI.Filter('', shaderData.fragment, shaderData.uniforms);
+    this.dropletShader = new PIXI.Filter(
+      "",
+      shaderData.fragment,
+      shaderData.uniforms
+    );
 
     // Áp dụng vào đối tượng
     this.stage.filters = [this.dropletShader];
@@ -270,7 +279,7 @@ class EffectCanvas {
     this.renderer.resize(width, height);
 
     this.background.clear();
-    this.background.beginFill('0xffffff');
+    this.background.beginFill("0xffffff");
     this.background.drawRect(0, 0, width, height);
     this.background.endFill();
   }
@@ -289,10 +298,7 @@ class EffectCanvas {
    * @return {void}
    */
   updateShader(width, height) {
-    this.dropletShader.uniforms.iResolution = [
-    width,
-    height];
-
+    this.dropletShader.uniforms.iResolution = [width, height];
   }
 
   /**
@@ -301,8 +307,8 @@ class EffectCanvas {
    */
   render() {
     this.renderer.render(this.stage);
-  }}
-
+  }
+}
 
 /**
  * DropletManager class
@@ -312,7 +318,6 @@ class DropletManager {
    * EffectCanvas constructor
    */
   constructor(stage, loader) {
-
     /* Giá trị gốc
       smallDropletAmount = 1000;
       largeDropletAmount = 200;
@@ -368,46 +373,52 @@ class DropletManager {
     this.options = {
       spawnRate: {
         small: 0.6,
-        large: 0.05 }, //Tỷ lệ khởi tạo giọt
+        large: 0.05,
+      }, //Tỷ lệ khởi tạo giọt
 
       spawnsPerFrame: {
-        small: 200, 
-        large: 5 }, //Số giọt khởi tạo trên 1 frame
+        small: 200,
+        large: 5,
+      }, //Số giọt khởi tạo trên 1 frame
 
       spawnMass: {
         small: {
           min: 1,
-          max: 2 }, 
+          max: 2,
+        },
 
         large: {
           min: 7,
-          max: 10 } }, //Kích thước lúc khởi tạo
-
+          max: 10,
+        },
+      }, //Kích thước lúc khởi tạo
 
       poolDroplets: {
         small: {
           min: smallDropletAmount - 500,
-          max: smallDropletAmount }, 
+          max: smallDropletAmount,
+        },
 
         large: {
           min: largeDropletAmount - 100,
-          max: largeDropletAmount } }, //Số giọt tối thiểu và tối đa
-
+          max: largeDropletAmount,
+        },
+      }, //Số giọt tối thiểu và tối đa
 
       maximumMassGravity: 17, //Độ nặng - tốc độ rơi của giọt
       maximumMass: 21, //Kích thước tối đa
       dropletGrowSpeed: 1, //Tốc độ phát triển cảu giọt
       dropletShrinkSpeed: 2, //Tốc độ co lại của giọt
-      dropletContainerSize: 100 }; //Kích thước container
-
+      dropletContainerSize: 100,
+    }; //Kích thước container
 
     // Xác định ma trận vị trí để tính toán tất cả các cạnh của giọt trong một vòng lặp
     this.positionMatrix = [
-    [-1, -1],
-    [1, -1],
-    [-1, 1],
-    [1, 1]];
-
+      [-1, -1],
+      [1, -1],
+      [-1, 1],
+      [1, 1],
+    ];
 
     this.smallDroplets = [];
     this.largeDroplets = [];
@@ -416,8 +427,18 @@ class DropletManager {
     this.dropletLargeTexture = loader.resources["_alpha"].texture;
 
     // Tạo một container cho tất cả các giọt
-    this.smallDropletContainer = new DropletPool(Droplet, this.dropletSmallTexture, this.options.poolDroplets.small.min, this.options.poolDroplets.small.max);
-    this.largeDropletContainer = new DropletPool(LargeDroplet, this.dropletLargeTexture, this.options.poolDroplets.large.min, this.options.poolDroplets.large.max);
+    this.smallDropletContainer = new DropletPool(
+      Droplet,
+      this.dropletSmallTexture,
+      this.options.poolDroplets.small.min,
+      this.options.poolDroplets.small.max
+    );
+    this.largeDropletContainer = new DropletPool(
+      LargeDroplet,
+      this.dropletLargeTexture,
+      this.options.poolDroplets.large.min,
+      this.options.poolDroplets.large.max
+    );
 
     stage.addChild(this.largeDropletContainer);
     stage.addChild(this.smallDropletContainer);
@@ -428,7 +449,12 @@ class DropletManager {
    * @return {void}
    */
   update(width, height) {
-    DropletManager.removeLargeOffscreenDroplets(width, height, this.largeDroplets, this.largeDropletContainer);
+    DropletManager.removeLargeOffscreenDroplets(
+      width,
+      height,
+      this.largeDroplets,
+      this.largeDropletContainer
+    );
 
     // Kích hoạt phương thức spawn cho giọt nhỏ
     for (let i = 0; i < this.options.spawnsPerFrame.small; i++) {
@@ -467,7 +493,10 @@ class DropletManager {
    * @param i - Giọt đang được kiểm tra
    */
   removeLargeDroplets(i) {
-    if (this.largeDroplets[i].mass === 0 && this.largeDroplets[i].toBeRemoved === true) {
+    if (
+      this.largeDroplets[i].mass === 0 &&
+      this.largeDroplets[i].toBeRemoved === true
+    ) {
       this.largeDropletContainer.destroy(this.largeDroplets[i]);
       this.largeDroplets.splice(i, 1);
     }
@@ -532,7 +561,11 @@ class DropletManager {
     }
 
     // Kiểm tra xem khối lượng các giọt có đủ cao để di chuyển không và nếu giọt vẫn chưa chuyển động
-    if (droplet.mass < this.options.maximumMassGravity && droplet.dropletVelocity.y === 0 && droplet.dropletVelocity.x === 0) {
+    if (
+      droplet.mass < this.options.maximumMassGravity &&
+      droplet.dropletVelocity.y === 0 &&
+      droplet.dropletVelocity.x === 0
+    ) {
       // Có một khả năng giọt bắt đầu chuyển động
       // if (true) {
       //   droplet.dropletVelocity.x = Utils.getRandomInt(0.5, 3);
@@ -540,7 +573,10 @@ class DropletManager {
       if (Math.random() < 0.01) {
         droplet.dropletVelocity.y = Utils.getRandomInt(0.5, 3);
       }
-    } else if (droplet.mass < this.options.maximumMassGravity && droplet.dropletVelocity.y !== 0) {
+    } else if (
+      droplet.mass < this.options.maximumMassGravity &&
+      droplet.dropletVelocity.y !== 0
+    ) {
       // Có một khả năng là giọt dịch chuyển sang trái hoặc phải
       if (Math.random() < 0.1) {
         droplet.x += Utils.getRandomInt(-10, 10) / 10;
@@ -550,7 +586,10 @@ class DropletManager {
       if (Math.random() < 0.1) {
         droplet.dropletVelocity.y = 0;
       }
-    } else if (droplet.mass >= this.options.maximumMassGravity && droplet.dropletVelocity.y < 10) {
+    } else if (
+      droplet.mass >= this.options.maximumMassGravity &&
+      droplet.dropletVelocity.y < 10
+    ) {
       // Giọt rơi vì nó quá nặng, tốc độ và hướng của nó hiện đã được thiết lập
       droplet.dropletVelocity.y = Utils.getRandomInt(10, 20);
       droplet.dropletVelocity.x = Utils.getRandomInt(-10, 10) / 10;
@@ -573,9 +612,15 @@ class DropletManager {
     // Lặp qua positionMatrix để tính vị trí của mọi cạnh của giọt
     for (let i = 0; i < length; i++) {
       const edgePosition = {
-        x: Math.floor((droplet.x + droplet.width / 7 * this.positionMatrix[i][0]) / this.options.dropletContainerSize),
-        y: Math.floor((droplet.y + droplet.height / 7 * this.positionMatrix[i][1]) / this.options.dropletContainerSize) };
-
+        x: Math.floor(
+          (droplet.x + (droplet.width / 7) * this.positionMatrix[i][0]) /
+            this.options.dropletContainerSize
+        ),
+        y: Math.floor(
+          (droplet.y + (droplet.height / 7) * this.positionMatrix[i][1]) /
+            this.options.dropletContainerSize
+        ),
+      };
 
       // Luôn luôn đẩy vị trí đầu tiên trong mảng arrayIndexes
       if (i === 0) {
@@ -584,7 +629,10 @@ class DropletManager {
       }
 
       // Nếu vị trí hiện tại khác với vị trí đầu tiên, hãy lưu trữ giá trị mới vì điều đó có nghĩa rằng đây cũng là một mảng mà chúng ta cần kiểm tra xung đột
-      if (arrayIndexes[0].x !== edgePosition.x || arrayIndexes[0].y !== edgePosition.y) {
+      if (
+        arrayIndexes[0].x !== edgePosition.x ||
+        arrayIndexes[0].y !== edgePosition.y
+      ) {
         arrayIndexes.push(edgePosition);
       }
     }
@@ -605,7 +653,10 @@ class DropletManager {
     const length = this.largeDroplets.length;
 
     for (let i = length - 1; i >= 0; i--) {
-      if (droplet.x === this.largeDroplets[i].x && droplet.y === this.largeDroplets[i].y) {
+      if (
+        droplet.x === this.largeDroplets[i].x &&
+        droplet.y === this.largeDroplets[i].y
+      ) {
         continue;
       }
 
@@ -618,7 +669,10 @@ class DropletManager {
 
       // Nếu khoảng cách giữa các giọt đủ gần, các giọt va chạm sẽ tăng kích thước
       if (distance <= droplet.width / 7 + this.largeDroplets[i].width / 7) {
-        if (droplet.mass + this.largeDroplets[i].mass <= this.options.maximumMass) {
+        if (
+          droplet.mass + this.largeDroplets[i].mass <=
+          this.options.maximumMass
+        ) {
           droplet.targetMass = droplet.mass + this.largeDroplets[i].mass;
         } else {
           droplet.targetMass = this.options.maximumMass;
@@ -645,29 +699,53 @@ class DropletManager {
 
     for (let i = 0; i < arrayIndexes.length; i++) {
       //Nếu giọt nhỏ không tồn tại nữa, chúng ta có thể tiếp tục đến giá trị tiếp theo trong vòng lặp
-      if (typeof this.smallDroplets[arrayIndexes[i].x] === 'undefined' || typeof this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y] === 'undefined') {
+      if (
+        typeof this.smallDroplets[arrayIndexes[i].x] === "undefined" ||
+        typeof this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y] ===
+          "undefined"
+      ) {
         continue;
       }
 
       // Lưu trữ chiều dài của mảng để vòng lặp for không phải làm điều đó mỗi lần chạy
-      const smallDropletsLength = this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y].length;
+      const smallDropletsLength =
+        this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y].length;
 
       for (let c = smallDropletsLength - 1; c >= 0; c--) {
         // Tính sự khác biệt về vị trí đối với trục hoành và trục tung
-        const dx = droplet.x - this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].x;
-        const dy = droplet.y - this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].y;
+        const dx =
+          droplet.x -
+          this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].x;
+        const dy =
+          droplet.y -
+          this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].y;
 
         // Tính khoảng cách giữa giọt hiện tại và giọt hiện tại khác
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         // Nếu khoảng cách đủ nhỏ, chúng ta có thể tăng kích thước của giọt lớn và loại bỏ giọt nhỏ
-        if (distance <= droplet.width / 7 + this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].width / 7) {
-          if (droplet.mass + this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].mass / 3 <= this.options.maximumMass) {
-            droplet.targetMass = droplet.mass + this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].mass / 3;
+        if (
+          distance <=
+          droplet.width / 7 +
+            this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].width /
+              7
+        ) {
+          if (
+            droplet.mass +
+              this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].mass /
+                3 <=
+            this.options.maximumMass
+          ) {
+            droplet.targetMass =
+              droplet.mass +
+              this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c].mass /
+                3;
           }
 
           // Loại bỏ giọt nhỏ và đặt nó trở lại nhóm đối tượng
-          this.smallDropletContainer.destroy(this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c]);
+          this.smallDropletContainer.destroy(
+            this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y][c]
+          );
           this.smallDroplets[arrayIndexes[i].x][arrayIndexes[i].y].splice(c, 1);
         }
       }
@@ -694,13 +772,17 @@ class DropletManager {
 
     const position = {
       x: Utils.getRandomInt(0, width),
-      y: Utils.getRandomInt(0, height) };
+      y: Utils.getRandomInt(0, height),
+    };
 
-    const mass = Utils.getRandomInt(this.options.spawnMass.small.min, this.options.spawnMass.small.max);
+    const mass = Utils.getRandomInt(
+      this.options.spawnMass.small.min,
+      this.options.spawnMass.small.max
+    );
     const arrayIndex = {
       x: Math.floor(position.x / this.options.dropletContainerSize),
-      y: Math.floor(position.y / this.options.dropletContainerSize) };
-
+      y: Math.floor(position.y / this.options.dropletContainerSize),
+    };
 
     // Cập nhật với vị trí và bán kính mới của giọt
     droplet.x = position.x;
@@ -709,11 +791,11 @@ class DropletManager {
     droplet.width = droplet.mass * 8;
     droplet.height = droplet.mass * 8;
 
-    if (typeof this.smallDroplets[arrayIndex.x] === 'undefined') {
+    if (typeof this.smallDroplets[arrayIndex.x] === "undefined") {
       this.smallDroplets[arrayIndex.x] = [];
     }
 
-    if (typeof this.smallDroplets[arrayIndex.x][arrayIndex.y] === 'undefined') {
+    if (typeof this.smallDroplets[arrayIndex.x][arrayIndex.y] === "undefined") {
       this.smallDroplets[arrayIndex.x][arrayIndex.y] = [];
     }
 
@@ -738,7 +820,10 @@ class DropletManager {
     }
 
     // Đảm bảo giọt cập nhật với vị trí và bán kính mới
-    const mass = Utils.getRandomInt(this.options.spawnMass.large.min, this.options.spawnMass.large.max);
+    const mass = Utils.getRandomInt(
+      this.options.spawnMass.large.min,
+      this.options.spawnMass.large.max
+    );
     droplet.x = Utils.getRandomInt(0, width);
     droplet.y = Utils.getRandomInt(-100, height / 1.5);
     droplet.mass = mass / 2;
@@ -759,18 +844,28 @@ class DropletManager {
    * @param {DropletPool} dropletContainer
    * @return {void}
    */
-  static removeLargeOffscreenDroplets(width, height, dropletArray, dropletContainer) {
+  static removeLargeOffscreenDroplets(
+    width,
+    height,
+    dropletArray,
+    dropletContainer
+  ) {
     // Lưu trữ độ dài của mảng để vòng lặp for không phải thực hiện điều đó mỗi lần chạy
     const length = dropletArray.length;
 
     for (let i = length - 1; i >= 0; i--) {
-      if (dropletArray[i].x > width + 10 || dropletArray[i].x < -10 || dropletArray[i].y > height + 10 || dropletArray[i].y < -100) {
+      if (
+        dropletArray[i].x > width + 10 ||
+        dropletArray[i].x < -10 ||
+        dropletArray[i].y > height + 10 ||
+        dropletArray[i].y < -100
+      ) {
         dropletContainer.destroy(dropletArray[i]);
         dropletArray.splice(i, 1);
       }
     }
-  }}
-
+  }
+}
 
 /**
  * DropletPool class
@@ -786,8 +881,8 @@ class DropletPool extends PIXI.particles.ParticleContainer {
       position: true,
       rotation: false,
       uvs: false,
-      alpha: false });
-
+      alpha: false,
+    });
 
     this.ObjectToCreate = ObjectToCreate;
     this.objectTexture = objectTexture;
@@ -853,7 +948,9 @@ class DropletPool extends PIXI.particles.ParticleContainer {
    */
   destroy(element) {
     if (this.inUse - 1 < 0) {
-      console.error('Something went wrong, you cant remove more elements than there are in the total pool');
+      console.error(
+        "Something went wrong, you cant remove more elements than there are in the total pool"
+      );
       return;
     }
 
@@ -865,8 +962,8 @@ class DropletPool extends PIXI.particles.ParticleContainer {
     // Đẩy phần tử trở lại nhóm đối tượng để nó có thể được sử dụng lại lần nữa
     this.inUse -= 1;
     this.pool.push(element);
-  }}
-
+  }
+}
 
 /**
  * Droplet Class
@@ -879,7 +976,8 @@ class Droplet extends PIXI.Sprite {
     super(texture);
 
     this.mass = 0;
-  }}
+  }
+}
 
 /**
  * LargeDroplet Class
@@ -894,7 +992,8 @@ class LargeDroplet extends Droplet {
     this.dropletVelocity = new PIXI.Point(0, 0);
     this.toBeRemoved = false;
     this.targetMass = 0;
-  }}
+  }
+}
 
 /**
  * Lớp Utilities có một số chức năng cần thiết trong toàn bộ ứng dụng
@@ -902,13 +1001,14 @@ class LargeDroplet extends Droplet {
 class Utils {
   /**
    * Trả về một số nguyên ngẫu nhiên giữa giá trị tối thiểu và giá trị lớn nhất đã cho
-   * @param {number} min - 
-   * @param {number} max - 
+   * @param {number} min -
+   * @param {number} max -
    * @return {number}
    */
   static getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
-  }}
+  }
+}
 
 /**
  * Chức năng onload được thực thi bất cứ khi nào trang tải xong hay khởi tạo ứng dụng
