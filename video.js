@@ -1,24 +1,19 @@
 function checkCanvasRendered(canvas, callback) {
+  // 여기서 canvas가 완전히 렌더링 되었는지 확인하는 로직을 추가할 수 있습니다.
+  // 예를 들어, canvas의 특정 픽셀 값이 기대하는 값과 일치하는지 확인할 수 있습니다.
+
+  // 간단한 예: canvas에 픽셀 데이터가 있는지 확인
   var context = canvas.getContext("2d");
   var data = context.getImageData(0, 0, canvas.width, canvas.height).data;
-
-  // 색깔 diversity를 확인하기 위한 객체
-  var colors = {};
-
   for (var i = 0; i < data.length; i += 4) {
-    // 각 픽셀의 RGB 값을 키로 사용하여 colors 객체에 저장
-    var colorKey = `${data[i]}-${data[i + 1]}-${data[i + 2]}`;
-    colors[colorKey] = (colors[colorKey] || 0) + 1;
+    if (data[i + 3] !== 0) {
+      // alpha값이 0이 아닌 픽셀 발견 시
+      callback();
+      return;
+    }
   }
 
-  // 여러 색깔의 픽셀이 존재하는지 확인
-  // 예: 색상이 3개 이상인 경우 렌더링 완료로 간주
-  if (Object.keys(colors).length > 3) {
-    callback();
-    return;
-  }
-
-  // 아직 원하는 조건에 맞게 렌더링이 완료되지 않았다면 다시 확인
+  // 아직 렌더링이 완료되지 않았다면 다시 확인
   requestAnimationFrame(() => checkCanvasRendered(canvas, callback));
 }
 
