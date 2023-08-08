@@ -18,6 +18,8 @@ function executeCanvasRelatedCode(canvas) {
   //이미지 잘 들어가나 확인 *잘 확인됨, "image/webp"이걸로 수정해도 잘 됨.
   var img = document.createElement("img");
   img.src = canvas.toDataURL();
+  img.alt = "Description of the image"; // add this line
+  img.title = "Additional information when hover"; // add this line
   document.body.appendChild(img);
 
   var video = new Whammy.Video(15); // 15는 FPS (frames per second)
