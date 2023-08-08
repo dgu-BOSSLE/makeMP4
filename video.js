@@ -10,18 +10,21 @@ function checkCanvasRendered(canvas, callback) {
 
   requestAnimationFrame(() => checkCanvasRendered(canvas, callback));
 }
-
-// Canvas 관련 코드를 실행하는 함수
-function executeCanvasRelatedCode(canvas) {
-  // 캔버스가 정상적으로 참조되었는지 확인
-  //console.log(canvas);
-  //이미지 잘 들어가나 확인 *잘 확인됨, "image/webp"이걸로 수정해도 잘 됨.
+// 캔버스의 상태를 캡처하고 이미지 데이터를 Whammy.Video 객체에 추가하는 함수
+function captureAndAddImage(canvas, video) {
+  // 캔버스를 이미지 데이터로 변환
+  var dataURL = canvas.toDataURL("image/webp");
   var img = document.createElement("img");
-  img.src = canvas.toDataURL();
+  img.src = dataURL;
   img.alt = "Description of the image"; // add this line
   img.title = "Additional information when hover"; // add this line
   document.body.appendChild(img);
 
+  // 이미지 데이터를 Whammy Video 객체에 추가
+  video.add(canvas);
+}
+
+function executeCanvasRelatedCode(canvas) {
   var video = new Whammy.Video(15); // 15는 FPS (frames per second)
 
   // 주어진 시간 동안(예: 10초), 일정 간격으로(예: 100밀리초) 캔버스를 캡처
@@ -29,11 +32,10 @@ function executeCanvasRelatedCode(canvas) {
   var interval = 100; // 100밀리초 간격
 
   var captureFrames = setInterval(function () {
-    // 캔버스를 이미지 데이터로 변환
-    var dataURL = canvas.toDataURL("image/webp");
-
-    // 이미지 데이터를 Whammy Video 객체에 추가
-    video.add(canvas);
+    // requestAnimationFrame을 사용하여 captureAndAddImage 함수 호출
+    requestAnimationFrame(function () {
+      captureAndAddImage(canvas, video);
+    });
   }, interval);
 
   // 지정된 시간이 경과한 후에 캡처를 중지하고 비디오를 컴파일
@@ -43,7 +45,7 @@ function executeCanvasRelatedCode(canvas) {
     // 동영상 데이터를 생성
     var output = video.compile();
 
-    // 생성된 동영상 데이터를 이용해 다운로드 링크
+    // 생성된 동영상 데이터를 이용해 다운로드 링크 생성
     var url = URL.createObjectURL(output);
     var link = document.createElement("a");
     link.href = url;
