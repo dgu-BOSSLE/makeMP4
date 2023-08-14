@@ -1,3 +1,4 @@
+// 웹 브라우저에서 화면 녹화를 수행하고 녹화된 동영상의 URL을 생성하는 기능을 제공
 const startButton = document.getElementById("start");
 const stopButton = document.getElementById("stop");
 const output = document.getElementById("output");
