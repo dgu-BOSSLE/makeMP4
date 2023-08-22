@@ -6,11 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="./style.css">
 </head>
 <body>
+
 <!-- partial:index.partial.html -->
 
 <!-- partial -->
-<script type="text/javascript" src="node_modules/ffmpeg.js/ffmpeg-mp4.js"></script>
-<script type="text/javascript" src="node_modules/ffmpeg.js/ffmpeg-worker-mp4.js"></script>
 <script type="text/javascript" src="webm-writer-0.3.0.js"></script>
 
 
@@ -20,36 +19,5 @@
   const animationElement = document.getElementById('animationElement'); </script>
 <script src="video.js"></script>
 <script src="node_modules/whammy/whammy.js"></script>
-<script>
-  //수정
-  fetch('http://127.0.0.1:5500/output.webm').then(response => response.arrayBuffer()).then(data => {
-      const webmFile = new Uint8Array(data);
-
-      // WebM 파일을 MP4로 변환
-      const result = ffmpeg({
-          MEMFS: [{ name: "input.webm", data: webmFile }],
-          arguments: ["-i", "input.webm", "output.mp4"],
-          // 웹 워커 파일 경로 설정
-          workerPath: "node_modules/ffmpeg.js/ffmpeg-worker-mp4"
-      });
-
-      const mp4Data = result.MEMFS[0].data;
-
-      // MP4 파일 다운로드
-      const blob = new Blob([mp4Data], { type: "video/mp4" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'converted_video.mp4';
-      document.body.appendChild(a);
-      a.click();
-      setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-      }, 100);
-  });
-</script>
-
 </body>
 </html>

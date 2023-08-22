@@ -10,3 +10,8 @@ canvas{
     top:0;
     left:0;
 }
+
+#captureVideoButton {
+    position: relative;
+    z-index: 9999;  // 높은 z-index 값을 주어 다른 요소보다 앞에 표시
+}
