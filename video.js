@@ -1,7 +1,6 @@
 // 버튼이 눌려있는 상태인지 표시하는 전역 변수
 var isButtonPressed = false;
 //여기를 수정해야함. 어우 졸령...
-
 function executeCanvasRelatedCode(canvas) {
     var videoWriter = new WebMWriter({
         quality: 0.95,
@@ -24,12 +23,14 @@ function executeCanvasRelatedCode(canvas) {
 
         // 동영상 작성 완료
         videoWriter.complete().then(function (webMBlob) {
-            // 생성된 동영상 데이터를 이용해 다운로드 링크 생성
-            var url = URL.createObjectURL(webMBlob);
-            var link = document.createElement('a');
-            link.href = url;
-            link.download = 'output.webm';
-            link.click();
+            var reader = new FileReader();
+            reader.onload = function () {
+                window.flutter_inappwebview.callHandler(
+                    'videoCreated',
+                    reader.result,
+                );
+            };
+            reader.readAsDataURL(webMBlob);
         });
     }, duration * 1000); // duration을 밀리초로 변환
 }
