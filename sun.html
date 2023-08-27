@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SunLight Preview</title>
+  <style>
+    html body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    .canvas-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background-image: url('https://as1.ftcdn.net/v2/jpg/00/83/84/22/1000_F_83842235_pwxY8nlBER5QkfJXZzIbCeBRKeZjrn1X.jpg');
+      background-size: cover;
+      background-repeat: no-repeat;
+    }
+    .canvas-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <script>
+    var mid_x_pro = 50;
+    var mid_y_pro = 30;
+
+    function set_x_pro(x){
+      mid_x_pro = x;
+    }
+
+  </script>
+  <div class="canvas-container">
+    <canvas id="ray" class="canvas-overlay"></canvas>
+    <canvas id="flare" class="canvas-overlay"></canvas>
+  </div>
+
+  <script src="sun_ray.js"></script>
+  <script src="sun_flare.js"></script>
+</body>
+
+</html>
