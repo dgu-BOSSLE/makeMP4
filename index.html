@@ -26,23 +26,10 @@
       // Background image
       const img = new Image();
       img.src = 'rain_cat.jpg';
-      img.onload = function() {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        createSnow();
-      }
 
-      const snowflakesCount = 300;
-
-      function createSnow() {
-        for (let i = 0; i < snowflakesCount; i++) {
-          const x = Math.random() * canvas.width;
-          const y = Math.random() * canvas.height;
-          const radius = Math.random() * 4 + 2;
-          const speed = Math.random() * 3 + 1;
-
-          snowflakes.push(new Snowflake(x, y, radius, speed));
-        }
-      }
+      let snowflakesCount = 300;
+      let fallSpeedMultiplier = 1.0;
+      const snowflakes = [];
 
       function Snowflake(x, y, radius, speed) {
         this.x = x;
@@ -60,11 +47,10 @@
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
-
-
+      }
 
       Snowflake.prototype.update = function() {
-        this.y += this.speed;
+        this.y += this.speed * fallSpeedMultiplier;
 
         if (this.y > canvas.height) {
           this.y = 0;
@@ -73,7 +59,17 @@
         this.draw();
       }
 
-      const snowflakes = [];
+      function createSnow() {
+        snowflakes.length = 0; // Clear the snowflakes array
+        for (let i = 0; i < snowflakesCount; i++) {
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const radius = Math.random() * 4 + 2;
+          const speed = Math.random() * 3 + 1;
+
+          snowflakes.push(new Snowflake(x, y, radius, speed));
+        }
+      }
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -84,7 +80,27 @@
         requestAnimationFrame(animate);
       }
 
-      animate();
+      img.onload = function() {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        createSnow();
+        animate();
+      }
+
+      // 눈송이의 양을 조절하는 함수
+      function setSnowDensity(value) {
+        snowflakesCount = value;
+        createSnow();
+      }
+
+      // 눈송이의 속도를 조절하는 함수
+      function setSnowFallSpeed(speedMultiplier) {
+        fallSpeedMultiplier = speedMultiplier;
+      }
+
+      // 웹 페이지가 로드될 때 눈을 생성
+      if (typeof module === 'undefined') {
+        window.onload = createSnow;
+      }
     </script>
   </body>
 </html>
