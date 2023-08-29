@@ -1,51 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snow</title>
     <style>
-        body,
-        canvas {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
+      body,
+      canvas {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
     </style>
-</head>
-<body>
-<canvas id="canvas"></canvas>
-<script type="text/javascript" src="video.js"></script>
-<script type="text/javascript" src="webm-writer-0.3.0.js"></script>
-<script type="text/javascript" src="snowscript.js"></script> 
-<script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+  </head>
+  <body>
+    <div id="snow"></div>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript" src="video.js"></script>
+    <script type="text/javascript" src="webm-writer-0.3.0.js"></script>
+    <script type="text/javascript" src="snowscript.js"></script>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
 
-    // 여기서 배경 이미지를 설정합니다.
-    var bgImg = new Image();
-    bgImg.src = "rain_cat.jpg";
-    bgImg.onload = function() {
-      document.body.style.backgroundImage = 'url(' + bgImg.src + ')';
-    };
+      // 여기서 배경 이미지를 설정합니다.
+      var bgImg = new Image();
+      bgImg.src = "rain_cat.jpg";
+      bgImg.onload = function () {
+        document.body.style.backgroundImage = "url(" + bgImg.src + ")";
+      };
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-    let snowflakesCount = 300;
-    let fallSpeedMultiplier = 1.0;
-    const snowflakes = [];
+      let fallSpeedMultiplier = 1.0;
+      const snowflakes = [];
 
-    function Snowflake(x, y, radius, speed) {
+      function Snowflake(x, y, radius, speed) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.speed = speed;
         this.opacity = Math.random();
-    }
+      }
 
-    Snowflake.prototype.draw = function() {
+      Snowflake.prototype.draw = function () {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
@@ -53,42 +53,42 @@
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
-    };
+      };
 
-    Snowflake.prototype.update = function() {
+      Snowflake.prototype.update = function () {
         this.y += this.speed * fallSpeedMultiplier;
 
         if (this.y > canvas.height) {
-            this.y = 0;
+          this.y = 0;
         }
 
         this.draw();
-    };
+      };
 
-    function createSnow() {
-        snowflakes.length = 0; 
-        for (let i = 0; i < snowflakesCount; i++) {
-            const x = Math.random() * canvas.width;
-            const y = Math.random() * canvas.height;
-            const radius = Math.random() * 4 + 2;
-            const speed = Math.random() * 3 + 1;
+      // function createSnow() {
+      //     snowflakes.length = 0;
+      //     for (let i = 0; i < snowflakesCount; i++) {
+      //         const x = Math.random() * canvas.width;
+      //         const y = Math.random() * canvas.height;
+      //         const radius = Math.random() * 4 + 2;
+      //         const speed = Math.random() * 3 + 1;
 
-            snowflakes.push(new Snowflake(x, y, radius, speed));
-        }
-    }
+      //         snowflakes.push(new Snowflake(x, y, radius, speed));
+      //     }
+      // }
 
-    function setSnowDensity(value) {
-        snowflakesCount = value;
-        createSnow();
-    }
+      // function setSnowDensity(value) {
+      //     snowflakesCount = value;
+      //     createSnow();
+      // }
 
-    function setSnowFallSpeed(speedMultiplier) {
-        fallSpeedMultiplier = speedMultiplier;
-    }
+      // function setSnowFallSpeed(speedMultiplier) {
+      //     fallSpeedMultiplier = speedMultiplier;
+      // }
 
-    if (typeof module === "undefined") {
+      if (typeof module === "undefined") {
         window.onload = createSnow;
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>
