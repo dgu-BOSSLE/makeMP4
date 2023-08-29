@@ -24,6 +24,7 @@ let fallSpeedMultiplier = 1.0;
 
 var img = document.createElement("img");
 img.src = "rain_cat.jpg";
+document.body.appendChild(img);  // 이미지를 문서에 추가
 
 // 눈 양 조절
 function setSnowDensity(value) {
