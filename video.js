@@ -7,7 +7,7 @@ function executeCanvasRelatedCode(canvas) {
     frameRate: 15,
   });
 
-  var duration = 20; // 20초
+  var duration = 10; // 20초
   var interval = 1000 / 15; // 15 FPS에 해당하는 밀리초 간격
 
   var captureFrames = setInterval(function () {
