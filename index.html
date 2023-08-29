@@ -15,19 +15,20 @@
     </style>
 </head>
 <body>
-<div id="snow"></div> <!-- 여기에 snow ID를 가진 div를 추가했습니다. -->
 <canvas id="canvas"></canvas>
 <script type="text/javascript" src="video.js"></script>
 <script type="text/javascript" src="webm-writer-0.3.0.js"></script>
-<script type="text/javascript" src="snowscript.js"></script>
 <script>
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
+    let snowflakesCount = 300;
+    let fallSpeedMultiplier = 1.0;
+
     var bgImg = new Image();
     bgImg.src = "rain_cat.jpg";
     bgImg.onload = function() {
-      document.body.style.backgroundImage = 'url(' + bgImg.src + ')';
+        document.body.style.backgroundImage = 'url(' + bgImg.src + ')';
     };
 
     canvas.width = window.innerWidth;
@@ -58,6 +59,7 @@
 
         if (this.y > canvas.height) {
             this.y = 0;
+            this.x = Math.random() * canvas.width;
         }
 
         this.draw();
@@ -75,6 +77,17 @@
         }
     }
 
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = 0; i < snowflakes.length; i++) {
+            snowflakes[i].update();
+        }
+        requestAnimationFrame(animate);
+    }
+
+    createSnow();
+    animate();
+
     function setSnowDensity(value) {
         snowflakesCount = value;
         createSnow();
@@ -84,8 +97,18 @@
         fallSpeedMultiplier = speedMultiplier;
     }
 
-    if (typeof module === "undefined") {
-        window.onload = createSnow;
+    function randomInt(value = 100) {
+      return Math.floor(Math.random() * value) + 1;
+    }
+
+    function randomIntRange(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
     }
 </script>
 </body>
