@@ -25,10 +25,19 @@
       let snowflakesCount = 300;
       let fallSpeedMultiplier = 1.0;
 
+      // var bgImg = document.createElement("img");
+      // bgImg.src = "rain_cat.jpg";
+      // bgImg.onload = function () {
+      //   document.body.style.backgroundImage = "url(" + bgImg.src + ")";
+      // };
+
       function displayImage(base64Image) {
         var img = document.createElement("img");
-        img.src = "data:image/jpeg;base64," + base64Image;
-        document.body.appendChild(img);
+        // img.src = "data:image/jpeg;base64," + base64Image;
+        img.src = "rain_cat.jpg";
+        img.onload = function () {
+          document.body.style.backgroundImage = "url(" + img.src + ")";
+        };
       }
 
       canvas.width = window.innerWidth;
