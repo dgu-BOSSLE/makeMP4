@@ -21,10 +21,11 @@ let fallSpeedMultiplier = 1.0;
 //   img.style.height = "200px";
 //   document.body.appendChild(img);
 // }
-
-var img = document.createElement("img");
+var img = new Image();
 img.src = "rain_cat.jpg";
-document.body.appendChild(img);  // 이미지를 문서에 추가
+img.onload = function() {
+  document.body.style.backgroundImage = 'url(' + img.src + ')';
+};
 
 // 눈 양 조절
 function setSnowDensity(value) {
@@ -71,7 +72,11 @@ if (typeof module !== 'undefined') {
     showSnow,
   };
 } else {
-  window.onload = createSnow;
+  window.onload = function() {
+    createSnow();
+    // 이미지가 로드되면 배경으로 설정
+    document.body.style.backgroundImage = 'url(' + img.src + ')';
+  };
 }
 
 function getSnowAttributes() {
