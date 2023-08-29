@@ -27,11 +27,7 @@
 
       function displayImage(base64Image) {
         var img = document.createElement("img");
-        img.src = base64Image;
-        img.style.position = "absolute";
-        img.style.zIndex = "1000";
-        img.style.width = "100px";
-        img.style.height = "200px";
+        img.src = "data:image/jpeg;base64," + base64Image;
         document.body.appendChild(img);
       }
 
