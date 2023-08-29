@@ -12,6 +12,14 @@ let bodyHeightPx = null;
 let pageHeightVh = null;
 let fallSpeedMultiplier = 1.0;
 
+function displayImage(base64Image) {
+  let body = document.body;
+  body.style.backgroundImage = 'url("data:image/jpeg;base64,' + base64Image + '")';
+  body.style.backgroundSize = 'cover';
+  body.style.backgroundPosition = 'center';
+  body.style.backgroundRepeat = 'no-repeat';
+}
+
 // 눈 양 조절
 function setSnowDensity(value) {
   let snowWrapper = document.getElementById('snow');
@@ -42,6 +50,22 @@ function setSnowFallSpeed(speedMultiplier) {
 function setHeightVariables() {
   bodyHeightPx = document.body.offsetHeight;
   pageHeightVh = (100 * bodyHeightPx / window.innerHeight);
+}
+
+function createSnow() {
+  setHeightVariables();
+  getSnowAttributes();
+  spawnSnowCSS(snowflakesCount);
+  spawnSnow(snowflakesCount);
+}
+
+if (typeof module !== 'undefined') {
+  module.exports = {
+    createSnow,
+    showSnow,
+  };
+} else {
+  window.onload = createSnow;
 }
 
 function getSnowAttributes() {
