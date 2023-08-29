@@ -1,50 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snow</title>
     <style>
-        body,
-        canvas {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-        }
+      body,
+      canvas {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
     </style>
-</head>
-<body>
-<canvas id="canvas"></canvas>
-<script type="text/javascript" src="video.js"></script>
-<script type="text/javascript" src="webm-writer-0.3.0.js"></script>
-<script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script type="text/javascript" src="video.js"></script>
+    <script type="text/javascript" src="webm-writer-0.3.0.js"></script>
+    <script>
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
 
-    let snowflakesCount = 300;
-    let fallSpeedMultiplier = 1.0;
+      let snowflakesCount = 300;
+      let fallSpeedMultiplier = 1.0;
 
-    var bgImg = new Image();
-    bgImg.src = "rain_cat.jpg";
-    bgImg.onload = function() {
-        document.body.style.backgroundImage = 'url(' + bgImg.src + ')';
-    };
+      // bgImg.src = "rain_cat.jpg";
+      // bgImg.onload = function () {
+      //   document.body.style.backgroundImage = "url(" + bgImg.src + ")";
+      // };
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+      function displayImage(base64Image) {
+        var img = new Image();
+        img.src = "data:image/jpeg;base64," + base64Image;
+        img.style.position = "absolute";
+        img.style.zIndex = "1000";
+        img.style.width = "100px";
+        img.style.height = "200px";
+        document.body.appendChild(img);
+      }
 
-    const snowflakes = [];
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
 
-    function Snowflake(x, y, radius, speed) {
+      const snowflakes = [];
+
+      function Snowflake(x, y, radius, speed) {
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.speed = speed;
         this.opacity = Math.random();
-    }
+      }
 
-    Snowflake.prototype.draw = function() {
+      Snowflake.prototype.draw = function () {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
@@ -52,64 +61,64 @@
         ctx.shadowBlur = 10;
         ctx.fill();
         ctx.shadowBlur = 0;
-    };
+      };
 
-    Snowflake.prototype.update = function() {
+      Snowflake.prototype.update = function () {
         this.y += this.speed * fallSpeedMultiplier;
 
         if (this.y > canvas.height) {
-            this.y = 0;
-            this.x = Math.random() * canvas.width;
+          this.y = 0;
+          this.x = Math.random() * canvas.width;
         }
 
         this.draw();
-    };
+      };
 
-    function createSnow() {
-        snowflakes.length = 0; 
+      function createSnow() {
+        snowflakes.length = 0;
         for (let i = 0; i < snowflakesCount; i++) {
-            const x = Math.random() * canvas.width;
-            const y = Math.random() * canvas.height;
-            const radius = Math.random() * 4 + 2;
-            const speed = Math.random() * 3 + 1;
+          const x = Math.random() * canvas.width;
+          const y = Math.random() * canvas.height;
+          const radius = Math.random() * 4 + 2;
+          const speed = Math.random() * 3 + 1;
 
-            snowflakes.push(new Snowflake(x, y, radius, speed));
+          snowflakes.push(new Snowflake(x, y, radius, speed));
         }
-    }
+      }
 
-    function animate() {
+      function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         for (let i = 0; i < snowflakes.length; i++) {
-            snowflakes[i].update();
+          snowflakes[i].update();
         }
         requestAnimationFrame(animate);
-    }
+      }
 
-    createSnow();
-    animate();
+      createSnow();
+      animate();
 
-    function setSnowDensity(value) {
+      function setSnowDensity(value) {
         snowflakesCount = value;
         createSnow();
-    }
+      }
 
-    function setSnowFallSpeed(speedMultiplier) {
+      function setSnowFallSpeed(speedMultiplier) {
         fallSpeedMultiplier = speedMultiplier;
-    }
+      }
 
-    function randomInt(value = 100) {
-      return Math.floor(Math.random() * value) + 1;
-    }
+      function randomInt(value = 100) {
+        return Math.floor(Math.random() * value) + 1;
+      }
 
-    function randomIntRange(min, max) {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
+      function randomIntRange(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
 
-    function getRandomArbitrary(min, max) {
-      return Math.random() * (max - min) + min;
-    }
-</script>
-</body>
+      function getRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+    </script>
+  </body>
 </html>
