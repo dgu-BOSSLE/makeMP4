@@ -33,8 +33,7 @@
 
       function displayImage(base64Image) {
         var img = document.createElement("img");
-        // img.src = "data:image/jpeg;base64," + base64Image;
-        img.src = "rain_cat.jpg";
+        img.src = "data:image/jpeg;base64," + base64Image;
         img.onload = function () {
           document.body.style.backgroundImage = "url(" + img.src + ")";
         };
