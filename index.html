@@ -23,6 +23,13 @@
     const canvas = document.getElementById("canvas");
     const ctx = canvas.getContext("2d");
 
+    // 여기서 배경 이미지를 설정합니다.
+    var bgImg = new Image();
+    bgImg.src = "rain_cat.jpg";
+    bgImg.onload = function() {
+      document.body.style.backgroundImage = 'url(' + bgImg.src + ')';
+    };
+
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
