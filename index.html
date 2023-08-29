@@ -26,11 +26,13 @@
       let fallSpeedMultiplier = 1.0;
 
       function displayImage(base64Image) {
-        var img = new Image();
+        var img = document.createElement("img");
         img.src = "data:image/jpeg;base64," + base64Image;
-        img.onload = function () {
-          document.body.style.backgroundImage = "url(" + img.src + ")";
-        };
+        img.style.position = "absolute";
+        img.style.zIndex = "1000";
+        img.style.width = "100px";
+        img.style.height = "200px";
+        document.body.appendChild(img);
       }
 
       canvas.width = window.innerWidth;
