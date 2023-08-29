@@ -5,36 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Snow</title>
     <style>
-        body,
-        canvas {
+        body {
             margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            overflow: hidden;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/6.2.0/pixi.min.js"></script>
 </head>
 <body>
-<canvas id="canvas"></canvas>
 <script type="text/javascript" src="video.js"></script>
 <script type="text/javascript" src="webm-writer-0.3.0.js"></script>
 <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    let img = null; // Initialize to null
+    let app = new PIXI.Application({
+        width: window.innerWidth,
+        height: window.innerHeight,
+        transparent: true
+    });
+    document.body.appendChild(app.view);
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    let background;
 
     function displayImage(base64Image) {
-        img = new Image();
-        img.src = "data:image/jpeg;base64," + base64Image;
-
-        img.onload = function() {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            createSnow();
-            animate();
-        };
+        background = PIXI.Sprite.from("data:image/jpeg;base64," + base64Image);
+        background.width = app.screen.width;
+        background.height = app.screen.height;
+        app.stage.addChild(background);
+        
+        createSnow();
+        animate();
     }
 
     let snowflakesCount = 300;
@@ -47,48 +45,36 @@
         this.radius = radius;
         this.speed = speed;
         this.opacity = Math.random();
+        this.graphics = new PIXI.Graphics();
+        this.graphics.beginFill(0xFFFFFF, this.opacity);
+        this.graphics.drawCircle(0, 0, this.radius);
+        this.graphics.endFill();
+        this.graphics.x = this.x;
+        this.graphics.y = this.y;
+        app.stage.addChild(this.graphics);
     }
-
-    Snowflake.prototype.draw = function() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255, 255, 255, " + this.opacity + ")";
-        ctx.shadowColor = "white";
-        ctx.shadowBlur = 10;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-    };
 
     Snowflake.prototype.update = function() {
         this.y += this.speed * fallSpeedMultiplier;
-
-        if (this.y > canvas.height) {
+        if (this.y > app.screen.height) {
             this.y = 0;
         }
-
-        this.draw();
+        this.graphics.y = this.y;
     };
 
     function createSnow() {
-        snowflakes.length = 0; 
+        snowflakes.length = 0;
         for (let i = 0; i < snowflakesCount; i++) {
-            const x = Math.random() * canvas.width;
-            const y = Math.random() * canvas.height;
+            const x = Math.random() * app.screen.width;
+            const y = Math.random() * app.screen.height;
             const radius = Math.random() * 4 + 2;
             const speed = Math.random() * 3 + 1;
-
             snowflakes.push(new Snowflake(x, y, radius, speed));
         }
     }
 
     function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        if (img) {
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        }
-
-        snowflakes.forEach((snowflake) => snowflake.update());
-
+        snowflakes.forEach(snowflake => snowflake.update());
         requestAnimationFrame(animate);
     }
 
