@@ -27,7 +27,7 @@
 
       function displayImage(base64Image) {
         var img = document.createElement("img");
-        img.src = "data:image/jpeg;base64," + base64Image;
+        img.src = base64Image;
         img.style.position = "absolute";
         img.style.zIndex = "1000";
         img.style.width = "100px";
