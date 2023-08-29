@@ -2,12 +2,29 @@ let globalDropletManagerInstance; //전역변수 추가하고
 
 //웹서버에서 이미지 링크 받아온다음에 그걸로 설정하면 됨.
 //일단 임시로 있는 링크로
+let background;
+let foreground;
+
+function displayImage(base64Image) {
+  return new Promise((resolve, reject) => {
+    var img = new Image();
+    img.src = "data:image/jpeg;base64," + base64Image;
+    img.onload = () => {
+      PIXI.loader.resources._background.texture = PIXI.Texture.from(img);
+      PIXI.loader.resources._foreground.texture = PIXI.Texture.from(img);
+      resolve();
+    };
+    img.onerror = () => {
+      reject();
+    };
+  });
+}
+
 const alpha =
   "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/alpha.png";
 const shine =
   "https://raw.githubusercontent.com/ptluaan/-raindrop_effect/main/shine.png";
-let background = "background.jpg";
-let foreground = "background.jpg";
+
 // const alpha = 'https://stefanweck.nl/codepen/alpha.png';
 // const shine = 'https://stefanweck.nl/codepen/shine.png';
 // const background = 'https://stefanweck.nl/codepen/background.jpg';
