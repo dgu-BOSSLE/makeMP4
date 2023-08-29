@@ -12,15 +12,18 @@ let bodyHeightPx = null;
 let pageHeightVh = null;
 let fallSpeedMultiplier = 1.0;
 
-function displayImage(base64Image) {
-  var img = document.createElement("img");
-  img.src = "data:image/jpeg;base64," + base64Image;
-  img.style.position = "absolute";
-  img.style.zIndex = "1000";
-  img.style.width = "100px";
-  img.style.height = "200px";
-  document.body.appendChild(img);
-}
+// function displayImage(base64Image) {
+//   var img = document.createElement("img");
+//   img.src = "data:image/jpeg;base64," + base64Image;
+//   img.style.position = "absolute";
+//   img.style.zIndex = "1000";
+//   img.style.width = "100px";
+//   img.style.height = "200px";
+//   document.body.appendChild(img);
+// }
+
+var img = document.createElement("img");
+img.src = "rain_cat.jpg";
 
 // 눈 양 조절
 function setSnowDensity(value) {
