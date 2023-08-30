@@ -31,15 +31,27 @@
       //   document.body.style.backgroundImage = "url(" + bgImg.src + ")";
       // };
 
+      // function displayImage(base64Image) {
+      //   var img = document.createElement("img");
+      //   img.src = "data:image/jpeg;base64," + base64Image;
+      //   img.style.position = "absolute";
+      //   img.style.zIndex = "1000";
+      //   img.style.width = "100px";
+      //   img.style.height = "200px";
+      //   img.onload = function () {
+      //     document.body.style.backgroundImage = "url(" + img.src + ")";
+      //   };
+      // }
+
       function displayImage(base64Image) {
-        var img = document.createElement("img");
+        var img = new Image(); // 이미지 객체 생성
         img.src = "data:image/jpeg;base64," + base64Image;
-        img.style.position = "absolute";
-        img.style.zIndex = "1000";
-        img.style.width = "100px";
-        img.style.height = "200px";
+
         img.onload = function () {
           document.body.style.backgroundImage = "url(" + img.src + ")";
+          document.body.style.backgroundSize = "cover"; // 배경 이미지가 페이지에 꽉 차도록 설정
+          document.body.style.backgroundPosition = "center"; // 배경 이미지가 중앙에 위치하도록 설정
+          document.body.style.backgroundRepeat = "no-repeat"; // 배경 이미지가 반복되지 않도록 설정
         };
       }
 
