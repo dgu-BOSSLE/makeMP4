@@ -9,11 +9,32 @@ function displayImage(base64Image) {
   return new Promise((resolve, reject) => {
     var img = new Image();
     img.src = "data:image/jpeg;base64," + base64Image;
+
     img.onload = () => {
-      PIXI.loader.resources._background.texture = PIXI.Texture.from(img);
-      PIXI.loader.resources._foreground.texture = PIXI.Texture.from(img);
-      resolve();
+      // 이미지 크기를 조절하기 위해 캔버스를 생성
+      var canvas = document.createElement("canvas");
+      var ctx = canvas.getContext("2d");
+
+      // 원하는 해상도 (480p)
+      let targetHeight = 480;
+      let aspectRatio = img.width / img.height;
+      let targetWidth = targetHeight * aspectRatio;
+
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+      var resizedImage = new Image();
+      resizedImage.src = canvas.toDataURL("image/jpeg");
+
+      resizedImage.onload = () => {
+        PIXI.loader.resources._background.texture = PIXI.Texture.from(img); // 원본 이미지를 배경으로 사용
+        PIXI.loader.resources._foreground.texture =
+          PIXI.Texture.from(resizedImage); // 조절된 이미지를 전경으로 사용
+        resolve();
+      };
     };
+
     img.onerror = () => {
       reject();
     };
