@@ -11,63 +11,41 @@ function displayImage(base64Image) {
     img.src = "data:image/jpeg;base64," + base64Image;
 
     img.onload = () => {
-      // 이미지 크기를 조절하기 위해 캔버스를 생성
-      var canvas = document.createElement("canvas");
-      var ctx = canvas.getContext("2d");
+      // 이미지의 높이가 3808보다 큰 경우 이미지 크기 조절
+      if (img.height > 3808) {
+        let aspectRatio = img.width / img.height;
+        let targetHeight = 3808;
+        let targetWidth = targetHeight * aspectRatio;
 
-      // 원하는 해상도 (2700p)
-      let targetHeightForBackground = 2700;
-      let aspectRatioForBackground = img.width / img.height;
-      let targetWidthForBackground =
-        targetHeightForBackground * aspectRatioForBackground;
+        // 캔버스를 사용하여 이미지 크기 조절
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
 
-      canvas.width = targetWidthForBackground;
-      canvas.height = targetHeightForBackground;
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        targetWidthForBackground,
-        targetHeightForBackground
-      );
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-      var resizedBackground = new Image();
-      resizedBackground.src = canvas.toDataURL("image/jpeg");
+        // 크기 조절된 이미지를 새 이미지 객체로 생성
+        var resizedImage = new Image();
+        resizedImage.src = canvas.toDataURL("image/jpeg");
 
-      // 원하는 해상도 (480p)를 전경 이미지에 대해서도 설정
-      let targetHeightForForeground = 480;
-      let aspectRatioForForeground = img.width / img.height;
-      let targetWidthForForeground =
-        targetHeightForForeground * aspectRatioForForeground;
+        resizedImage.onload = () => {
+          PIXI.loader.resources._background.texture =
+            PIXI.Texture.from(resizedImage);
+          PIXI.loader.resources._foreground.texture =
+            PIXI.Texture.from(resizedImage);
+          resolve();
+        };
 
-      canvas.width = targetWidthForForeground;
-      canvas.height = targetHeightForForeground;
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // 이전 그림을 지우기 위해 사용
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        targetWidthForForeground,
-        targetHeightForForeground
-      );
-
-      var resizedForeground = new Image();
-      resizedForeground.src = canvas.toDataURL("image/jpeg");
-
-      Promise.all([
-        new Promise((resolve) => {
-          resizedBackground.onload = resolve;
-        }),
-        new Promise((resolve) => {
-          resizedForeground.onload = resolve;
-        }),
-      ]).then(() => {
-        PIXI.loader.resources._background.texture =
-          PIXI.Texture.from(resizedBackground); // 2700p 이미지를 배경으로 사용
-        PIXI.loader.resources._foreground.texture =
-          PIXI.Texture.from(resizedForeground); // 480p 이미지를 전경으로 사용
+        resizedImage.onerror = () => {
+          reject();
+        };
+      } else {
+        // 이미지의 높이가 3808 이하인 경우 원본 이미지 사용
+        PIXI.loader.resources._background.texture = PIXI.Texture.from(img);
+        PIXI.loader.resources._foreground.texture = PIXI.Texture.from(img);
         resolve();
-      });
+      }
     };
 
     img.onerror = () => {
