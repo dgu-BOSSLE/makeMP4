@@ -15,24 +15,59 @@ function displayImage(base64Image) {
       var canvas = document.createElement("canvas");
       var ctx = canvas.getContext("2d");
 
-      // 원하는 해상도 (480p)
-      let targetHeight = 480;
-      let aspectRatio = img.width / img.height;
-      let targetWidth = targetHeight * aspectRatio;
+      // 원하는 해상도 (2700p)
+      let targetHeightForBackground = 2700;
+      let aspectRatioForBackground = img.width / img.height;
+      let targetWidthForBackground =
+        targetHeightForBackground * aspectRatioForBackground;
 
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-      ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+      canvas.width = targetWidthForBackground;
+      canvas.height = targetHeightForBackground;
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        targetWidthForBackground,
+        targetHeightForBackground
+      );
 
-      var resizedImage = new Image();
-      resizedImage.src = canvas.toDataURL("image/jpeg");
+      var resizedBackground = new Image();
+      resizedBackground.src = canvas.toDataURL("image/jpeg");
 
-      resizedImage.onload = () => {
-        PIXI.loader.resources._background.texture = PIXI.Texture.from(img); // 원본 이미지를 배경으로 사용
+      // 원하는 해상도 (480p)를 전경 이미지에 대해서도 설정
+      let targetHeightForForeground = 480;
+      let aspectRatioForForeground = img.width / img.height;
+      let targetWidthForForeground =
+        targetHeightForForeground * aspectRatioForForeground;
+
+      canvas.width = targetWidthForForeground;
+      canvas.height = targetHeightForForeground;
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // 이전 그림을 지우기 위해 사용
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        targetWidthForForeground,
+        targetHeightForForeground
+      );
+
+      var resizedForeground = new Image();
+      resizedForeground.src = canvas.toDataURL("image/jpeg");
+
+      Promise.all([
+        new Promise((resolve) => {
+          resizedBackground.onload = resolve;
+        }),
+        new Promise((resolve) => {
+          resizedForeground.onload = resolve;
+        }),
+      ]).then(() => {
+        PIXI.loader.resources._background.texture =
+          PIXI.Texture.from(resizedBackground); // 2700p 이미지를 배경으로 사용
         PIXI.loader.resources._foreground.texture =
-          PIXI.Texture.from(resizedImage); // 조절된 이미지를 전경으로 사용
+          PIXI.Texture.from(resizedForeground); // 480p 이미지를 전경으로 사용
         resolve();
-      };
+      });
     };
 
     img.onerror = () => {
